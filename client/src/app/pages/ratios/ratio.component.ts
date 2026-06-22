@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from '../../shared/api.service';
 import { InputOutputRatio, Material } from '../../shared/models';
@@ -8,7 +8,7 @@ import { InputOutputRatio, Material } from '../../shared/models';
 @Component({
   selector: 'app-ratio',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -20,10 +20,10 @@ import { InputOutputRatio, Material } from '../../shared/models';
         <table>
           <thead>
             <tr>
-              <th>原材料</th>
-              <th>成品</th>
+              <th>原材料名称</th>
+              <th>成品名称</th>
               <th>投入产出比</th>
-              <th>工序</th>
+              <th>工序名称</th>
               <th>备注</th>
               <th>操作</th>
             </tr>
@@ -89,12 +89,12 @@ import { InputOutputRatio, Material } from '../../shared/models';
                 <input class="form-control" type="number" [(ngModel)]="form.ratio" placeholder="请输入投入产出比" />
               </div>
               <div class="form-group">
-                <label>工序</label>
+                <label>工序名称</label>
                 <input class="form-control" [(ngModel)]="form.process_name" placeholder="请输入工序名称" />
               </div>
               <div class="form-group">
                 <label>备注</label>
-                <input class="form-control" [(ngModel)]="form.remark" placeholder="请输入备注" />
+                <textarea class="form-control" [(ngModel)]="form.remark" placeholder="请输入备注" rows="3"></textarea>
               </div>
             </div>
             <div class="modal-footer">

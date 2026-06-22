@@ -38,7 +38,7 @@ import { Vendor } from '../../shared/models';
                 <td>{{ item.contact_phone }}</td>
                 <td>{{ item.address }}</td>
                 <td>
-                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-default'">
+                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-gray'">
                     {{ item.status === 1 ? '启用' : '停用' }}
                   </span>
                 </td>

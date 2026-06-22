@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../shared/api.service';
 import { OutsourceOrder } from '../../shared/models';
@@ -6,7 +7,7 @@ import { OutsourceOrder } from '../../shared/models';
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -46,7 +47,7 @@ import { OutsourceOrder } from '../../shared/models';
             </div>
             <div class="form-group">
               <label>状态</label>
-              <div><span class="badge" [class]="orderStatusBadge(order.status)">{{ orderStatusText(order.status) }}</span></div>
+              <div><span [ngClass]="orderStatusBadge(order.status)">{{ orderStatusText(order.status) }}</span></div>
             </div>
             <div class="form-group">
               <label>总金额</label>
@@ -101,7 +102,7 @@ import { OutsourceOrder } from '../../shared/models';
                   <td>{{ item.unqualified_qty ?? 0 }}</td>
                   <td>{{ item.input_output_ratio ?? '-' }}</td>
                   <td>{{ item.expected_product_qty ?? '-' }}</td>
-                  <td><span class="badge" [class]="itemStatusBadge(item.status)">{{ itemStatusText(item.status) }}</span></td>
+                  <td><span [ngClass]="itemStatusBadge(item.status)">{{ itemStatusText(item.status) }}</span></td>
                   <td>-</td>
                 </tr>
               }
@@ -117,18 +118,18 @@ export class OrderDetailComponent implements OnInit {
   order: OutsourceOrder | null = null;
 
   private orderStatusMap: Record<number, { text: string; badge: string }> = {
-    0: { text: '草稿', badge: 'badge-gray' },
-    1: { text: '已下达', badge: 'badge-info' },
-    2: { text: '部分收货', badge: 'badge-warning' },
-    3: { text: '全部收货', badge: 'badge-success' },
-    4: { text: '已关闭', badge: 'badge-gray' }
+    0: { text: '草稿', badge: 'badge badge-gray' },
+    1: { text: '已下达', badge: 'badge badge-info' },
+    2: { text: '部分收货', badge: 'badge badge-warning' },
+    3: { text: '全部收货', badge: 'badge badge-success' },
+    4: { text: '已关闭', badge: 'badge badge-gray' }
   };
 
   private itemStatusMap: Record<number, { text: string; badge: string }> = {
-    0: { text: '待发料', badge: 'badge-gray' },
-    1: { text: '已发料', badge: 'badge-info' },
-    2: { text: '部分收货', badge: 'badge-warning' },
-    3: { text: '已收货', badge: 'badge-success' }
+    0: { text: '待发料', badge: 'badge badge-gray' },
+    1: { text: '已发料', badge: 'badge badge-info' },
+    2: { text: '部分收货', badge: 'badge badge-warning' },
+    3: { text: '已收货', badge: 'badge badge-success' }
   };
 
   constructor(

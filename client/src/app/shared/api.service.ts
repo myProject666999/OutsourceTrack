@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResult, PageResult, Vendor, Material, Warehouse, InputOutputRatio, OutsourceOrder, IssueRecord, ReceiptRecord, Alert, OrderBalance, VendorBalance, VendorStats, OverviewStats } from './models';
 
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:3001/api';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {

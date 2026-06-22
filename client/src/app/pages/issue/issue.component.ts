@@ -10,67 +10,87 @@ import { IssueRecord, OutsourceOrder, OrderItem, Warehouse } from '../../shared/
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="page">
+    <div class="page-container">
       <div class="page-header">
-        <h2>发料出库</h2>
+        <h1>发料出库</h1>
         <button class="btn btn-primary" (click)="openCreateModal()">新建发料</button>
       </div>
 
-      <div class="filter-bar">
-        <input type="text" placeholder="订单号" [(ngModel)]="filterOrderId" (ngModelChange)="loadIssues()" />
-        <input type="text" placeholder="外协厂" [(ngModel)]="filterVendorId" (ngModelChange)="loadIssues()" />
-        <input type="date" [(ngModel)]="filterDateStart" (ngModelChange)="loadIssues()" />
-        <input type="date" [(ngModel)]="filterDateEnd" (ngModelChange)="loadIssues()" />
+      <div class="card">
+        <div class="card-title">筛选条件</div>
+        <div class="filter-bar">
+          <div class="form-group">
+            <label>订单号</label>
+            <input type="text" class="form-control" placeholder="订单号" [(ngModel)]="filterOrderId" (ngModelChange)="loadIssues()" />
+          </div>
+          <div class="form-group">
+            <label>外协厂</label>
+            <input type="text" class="form-control" placeholder="外协厂" [(ngModel)]="filterVendorId" (ngModelChange)="loadIssues()" />
+          </div>
+          <div class="form-group">
+            <label>开始日期</label>
+            <input type="date" class="form-control" [(ngModel)]="filterDateStart" (ngModelChange)="loadIssues()" />
+          </div>
+          <div class="form-group">
+            <label>结束日期</label>
+            <input type="date" class="form-control" [(ngModel)]="filterDateEnd" (ngModelChange)="loadIssues()" />
+          </div>
+        </div>
       </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>订单号</th>
-            <th>外协厂</th>
-            <th>物料名称</th>
-            <th>发料数量</th>
-            <th>发料日期</th>
-            <th>发料人</th>
-            <th>仓库</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of issues">
-            <td>{{ item.order_no }}</td>
-            <td>{{ item.vendor_name }}</td>
-            <td>{{ item.material_name }}</td>
-            <td>{{ item.issue_qty }}</td>
-            <td>{{ item.issue_date }}</td>
-            <td>{{ item.issue_by }}</td>
-            <td>{{ item.warehouse_name }}</td>
-            <td>
-              <button class="btn btn-danger btn-sm" (click)="deleteIssue(item.id!)">删除</button>
-            </td>
-          </tr>
-          <tr *ngIf="issues.length === 0">
-            <td colspan="8" class="empty">暂无数据</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="card">
+        <div class="card-title">发料记录</div>
+        <table>
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>外协厂</th>
+              <th>物料名称</th>
+              <th>发料数量</th>
+              <th>发料日期</th>
+              <th>发料人</th>
+              <th>仓库</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of issues">
+              <td>{{ item.order_no }}</td>
+              <td>{{ item.vendor_name }}</td>
+              <td>{{ item.material_name }}</td>
+              <td>{{ item.issue_qty }}</td>
+              <td>{{ item.issue_date }}</td>
+              <td>{{ item.issue_by }}</td>
+              <td>{{ item.warehouse_name }}</td>
+              <td>
+                <button class="btn btn-sm btn-danger" (click)="deleteIssue(item.id!)">删除</button>
+              </td>
+            </tr>
+            <tr *ngIf="issues.length === 0">
+              <td colspan="8" class="empty">暂无数据</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <div class="pagination" *ngIf="total > pageSize">
-        <button class="btn btn-sm" [disabled]="page <= 1" (click)="prevPage()">上一页</button>
-        <span>{{ page }} / {{ totalPages }}</span>
-        <button class="btn btn-sm" [disabled]="page >= totalPages" (click)="nextPage()">下一页</button>
+        <div class="pagination" *ngIf="total > pageSize">
+          <div class="pagination-buttons">
+            <button [disabled]="page <= 1" (click)="prevPage()">上一页</button>
+            <span>{{ page }} / {{ totalPages }}</span>
+            <button [disabled]="page >= totalPages" (click)="nextPage()">下一页</button>
+          </div>
+        </div>
       </div>
 
       <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
         <div class="modal" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <h3>新建发料</h3>
-            <button class="btn-close" (click)="closeModal()">&times;</button>
+            <button class="modal-close" (click)="closeModal()">&times;</button>
           </div>
           <div class="modal-body">
             <div class="form-group" *ngIf="!selectedOrder">
               <label>选择订单</label>
-              <select [(ngModel)]="modalOrderId" (ngModelChange)="onOrderSelected()">
+              <select class="form-control" [(ngModel)]="modalOrderId" (ngModelChange)="onOrderSelected()">
                 <option value="">请选择订单</option>
                 <option *ngFor="let o of orders" [ngValue]="o.id">{{ o.order_no }} - {{ o.vendor_name }}</option>
               </select>
@@ -78,8 +98,11 @@ import { IssueRecord, OutsourceOrder, OrderItem, Warehouse } from '../../shared/
 
             <div *ngIf="selectedOrder">
               <div class="form-group">
-                <label>已选订单: {{ selectedOrder.order_no }} - {{ selectedOrder.vendor_name }}</label>
-                <button class="btn btn-sm" (click)="clearOrder()">更换订单</button>
+                <label>已选订单</label>
+                <div class="form-control" style="background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+                  <span>{{ selectedOrder.order_no }} - {{ selectedOrder.vendor_name }}</span>
+                  <button class="btn btn-sm btn-outline" (click)="clearOrder()">更换订单</button>
+                </div>
               </div>
 
               <div *ngFor="let item of formItems; let i = index" class="issue-item-form">
@@ -87,20 +110,20 @@ import { IssueRecord, OutsourceOrder, OrderItem, Warehouse } from '../../shared/
                 <div class="form-row">
                   <div class="form-group">
                     <label>发料数量</label>
-                    <input type="number" [(ngModel)]="item.issue_qty" min="0" />
+                    <input type="number" class="form-control" [(ngModel)]="item.issue_qty" min="0" />
                   </div>
                   <div class="form-group">
                     <label>发料日期</label>
-                    <input type="date" [(ngModel)]="item.issue_date" />
+                    <input type="date" class="form-control" [(ngModel)]="item.issue_date" />
                   </div>
                   <div class="form-group">
                     <label>发料人</label>
-                    <input type="text" [(ngModel)]="item.issue_by" />
+                    <input type="text" class="form-control" [(ngModel)]="item.issue_by" />
                   </div>
                   <div class="form-group">
                     <label>仓库</label>
-                    <select [(ngModel)]="item.warehouse_id">
-                      <option value="">请选择仓库</option>
+                    <select class="form-control" [(ngModel)]="item.warehouse_id">
+                      <option [ngValue]="null">请选择仓库</option>
                       <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
                     </select>
                   </div>
@@ -109,7 +132,7 @@ import { IssueRecord, OutsourceOrder, OrderItem, Warehouse } from '../../shared/
             </div>
           </div>
           <div class="modal-footer" *ngIf="selectedOrder">
-            <button class="btn" (click)="closeModal()">取消</button>
+            <button class="btn btn-outline" (click)="closeModal()">取消</button>
             <button class="btn btn-primary" (click)="saveIssue()" [disabled]="saving">{{ saving ? '保存中...' : '确认发料' }}</button>
           </div>
         </div>
@@ -171,32 +194,6 @@ export class IssueComponent implements OnInit {
     });
   }
 
-  deleteIssue(id: number): void {
-    if (!confirm('确认删除此发料记录?')) return;
-    this.apiService.deleteIssue(id).subscribe({
-      next: () => this.loadIssues()
-    });
-  }
-
-  prevPage(): void { this.page--; this.loadIssues(); }
-  nextPage(): void { this.page++; this.loadIssues(); }
-
-  openCreateModal(): void {
-    this.showModal = true;
-    this.selectedOrder = null;
-    this.modalOrderId = null;
-    this.formItems = [];
-    this.loadOrders();
-    this.loadWarehouses();
-  }
-
-  closeModal(): void {
-    this.showModal = false;
-    this.selectedOrder = null;
-    this.modalOrderId = null;
-    this.formItems = [];
-  }
-
   loadOrders(): void {
     let params = new HttpParams();
     params = params.set('status_min', '1');
@@ -213,6 +210,22 @@ export class IssueComponent implements OnInit {
         this.warehouses = res.data;
       }
     });
+  }
+
+  openCreateModal(): void {
+    this.showModal = true;
+    this.selectedOrder = null;
+    this.modalOrderId = null;
+    this.formItems = [];
+    this.loadOrders();
+    this.loadWarehouses();
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedOrder = null;
+    this.modalOrderId = null;
+    this.formItems = [];
   }
 
   onOrderSelected(): void {
@@ -274,4 +287,14 @@ export class IssueComponent implements OnInit {
       }
     });
   }
+
+  deleteIssue(id: number): void {
+    if (!confirm('确认删除此发料记录?')) return;
+    this.apiService.deleteIssue(id).subscribe({
+      next: () => this.loadIssues()
+    });
+  }
+
+  prevPage(): void { this.page--; this.loadIssues(); }
+  nextPage(): void { this.page++; this.loadIssues(); }
 }

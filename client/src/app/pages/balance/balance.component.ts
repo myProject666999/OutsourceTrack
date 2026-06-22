@@ -8,9 +8,9 @@ import { VendorBalance } from '../../shared/models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="page">
+    <div class="page-container">
       <div class="page-header">
-        <h2>在制料账</h2>
+        <h1>在制料账</h1>
         <button class="btn btn-primary" (click)="refresh()">刷新</button>
       </div>
 
@@ -37,7 +37,7 @@ import { VendorBalance } from '../../shared/models';
         </div>
 
         <div *ngIf="expandedVendorId === vb.vendor.id && vendorDetail" class="vendor-detail">
-          <table class="table">
+          <table>
             <thead>
               <tr>
                 <th>订单号</th>
@@ -108,10 +108,11 @@ export class BalanceComponent implements OnInit {
   }
 
   orderStatusText(status?: number): string {
-    if (status === 0) return '待发料';
-    if (status === 1) return '加工中';
-    if (status === 2) return '已收货';
-    if (status === 3) return '已完成';
+    if (status === 0) return '草稿';
+    if (status === 1) return '已下达';
+    if (status === 2) return '部分收货';
+    if (status === 3) return '全部收货';
+    if (status === 4) return '已关闭';
     return '未知';
   }
 

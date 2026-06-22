@@ -10,71 +10,87 @@ import { ReceiptRecord, OutsourceOrder, OrderItem, Warehouse } from '../../share
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="page">
+    <div class="page-container">
       <div class="page-header">
-        <h2>收货入库</h2>
+        <h1>收货入库</h1>
         <button class="btn btn-primary" (click)="openCreateModal()">新建收货</button>
       </div>
 
-      <div class="filter-bar">
-        <input type="text" placeholder="订单号" [(ngModel)]="filterOrderId" (ngModelChange)="loadReceipts()" />
-        <input type="text" placeholder="外协厂" [(ngModel)]="filterVendorId" (ngModelChange)="loadReceipts()" />
-        <input type="date" [(ngModel)]="filterDateStart" (ngModelChange)="loadReceipts()" />
-        <input type="date" [(ngModel)]="filterDateEnd" (ngModelChange)="loadReceipts()" />
-      </div>
+      <div class="card">
+        <div class="filter-bar">
+          <div class="form-group">
+            <label>订单号</label>
+            <input class="form-control" type="text" placeholder="订单号" [(ngModel)]="filterOrderId" (ngModelChange)="loadReceipts()" />
+          </div>
+          <div class="form-group">
+            <label>外协厂</label>
+            <input class="form-control" type="text" placeholder="外协厂" [(ngModel)]="filterVendorId" (ngModelChange)="loadReceipts()" />
+          </div>
+          <div class="form-group">
+            <label>开始日期</label>
+            <input class="form-control" type="date" [(ngModel)]="filterDateStart" (ngModelChange)="loadReceipts()" />
+          </div>
+          <div class="form-group">
+            <label>结束日期</label>
+            <input class="form-control" type="date" [(ngModel)]="filterDateEnd" (ngModelChange)="loadReceipts()" />
+          </div>
+        </div>
 
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>订单号</th>
-            <th>外协厂</th>
-            <th>物料名称</th>
-            <th>收货数量</th>
-            <th>合格数量</th>
-            <th>不合格数量</th>
-            <th>收货日期</th>
-            <th>收货人</th>
-            <th>仓库</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of receipts">
-            <td>{{ item.order_no }}</td>
-            <td>{{ item.vendor_name }}</td>
-            <td>{{ item.material_name }}</td>
-            <td>{{ item.receipt_qty }}</td>
-            <td>{{ item.qualified_qty }}</td>
-            <td>{{ item.unqualified_qty }}</td>
-            <td>{{ item.receipt_date }}</td>
-            <td>{{ item.received_by }}</td>
-            <td>{{ item.warehouse_name }}</td>
-            <td>
-              <button class="btn btn-danger btn-sm" (click)="deleteReceipt(item.id!)">删除</button>
-            </td>
-          </tr>
-          <tr *ngIf="receipts.length === 0">
-            <td colspan="10" class="empty">暂无数据</td>
-          </tr>
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>外协厂</th>
+              <th>物料名称</th>
+              <th>收货数量</th>
+              <th>合格数量</th>
+              <th>不合格数量</th>
+              <th>收货日期</th>
+              <th>收货人</th>
+              <th>仓库</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of receipts">
+              <td>{{ item.order_no }}</td>
+              <td>{{ item.vendor_name }}</td>
+              <td>{{ item.material_name }}</td>
+              <td>{{ item.receipt_qty }}</td>
+              <td>{{ item.qualified_qty }}</td>
+              <td>{{ item.unqualified_qty }}</td>
+              <td>{{ item.receipt_date }}</td>
+              <td>{{ item.received_by }}</td>
+              <td>{{ item.warehouse_name }}</td>
+              <td>
+                <button class="btn btn-sm btn-danger" (click)="deleteReceipt(item.id!)">删除</button>
+              </td>
+            </tr>
+            <tr *ngIf="receipts.length === 0">
+              <td colspan="10" class="empty">暂无数据</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <div class="pagination" *ngIf="total > pageSize">
-        <button class="btn btn-sm" [disabled]="page <= 1" (click)="prevPage()">上一页</button>
-        <span>{{ page }} / {{ totalPages }}</span>
-        <button class="btn btn-sm" [disabled]="page >= totalPages" (click)="nextPage()">下一页</button>
+        <div class="pagination" *ngIf="total > pageSize">
+          <span>{{ page }} / {{ totalPages }}</span>
+          <div class="pagination-buttons">
+            <button [disabled]="page <= 1" (click)="prevPage()">上一页</button>
+            <button [disabled]="page >= totalPages" (click)="nextPage()">下一页</button>
+          </div>
+        </div>
       </div>
 
       <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
         <div class="modal" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <h3>新建收货</h3>
-            <button class="btn-close" (click)="closeModal()">&times;</button>
+            <button class="modal-close" (click)="closeModal()">&times;</button>
           </div>
           <div class="modal-body">
             <div class="form-group" *ngIf="!selectedOrder">
               <label>选择订单</label>
-              <select [(ngModel)]="modalOrderId" (ngModelChange)="onOrderSelected()">
+              <select class="form-control" [(ngModel)]="modalOrderId" (ngModelChange)="onOrderSelected()">
                 <option value="">请选择订单</option>
                 <option *ngFor="let o of orders" [ngValue]="o.id">{{ o.order_no }} - {{ o.vendor_name }}</option>
               </select>
@@ -86,32 +102,32 @@ import { ReceiptRecord, OutsourceOrder, OrderItem, Warehouse } from '../../share
                 <button class="btn btn-sm" (click)="clearOrder()">更换订单</button>
               </div>
 
-              <div *ngFor="let item of formItems; let i = index" class="receipt-item-form">
+              <div *ngFor="let item of formItems; let i = index" class="issue-item-form">
                 <h4>{{ item.product_name }} ({{ item.raw_name }})</h4>
                 <div class="form-row">
                   <div class="form-group">
                     <label>收货数量</label>
-                    <input type="number" [(ngModel)]="item.receipt_qty" min="0" />
+                    <input class="form-control" type="number" [(ngModel)]="item.receipt_qty" min="0" />
                   </div>
                   <div class="form-group">
                     <label>合格数量</label>
-                    <input type="number" [(ngModel)]="item.qualified_qty" min="0" />
+                    <input class="form-control" type="number" [(ngModel)]="item.qualified_qty" min="0" />
                   </div>
                   <div class="form-group">
                     <label>不合格数量</label>
-                    <input type="number" [(ngModel)]="item.unqualified_qty" min="0" />
+                    <input class="form-control" type="number" [(ngModel)]="item.unqualified_qty" min="0" />
                   </div>
                   <div class="form-group">
                     <label>收货日期</label>
-                    <input type="date" [(ngModel)]="item.receipt_date" />
+                    <input class="form-control" type="date" [(ngModel)]="item.receipt_date" />
                   </div>
                   <div class="form-group">
                     <label>收货人</label>
-                    <input type="text" [(ngModel)]="item.received_by" />
+                    <input class="form-control" type="text" [(ngModel)]="item.received_by" />
                   </div>
                   <div class="form-group">
                     <label>仓库</label>
-                    <select [(ngModel)]="item.warehouse_id">
+                    <select class="form-control" [(ngModel)]="item.warehouse_id">
                       <option value="">请选择仓库</option>
                       <option *ngFor="let w of warehouses" [ngValue]="w.id">{{ w.name }}</option>
                     </select>
@@ -121,7 +137,7 @@ import { ReceiptRecord, OutsourceOrder, OrderItem, Warehouse } from '../../share
             </div>
           </div>
           <div class="modal-footer" *ngIf="selectedOrder">
-            <button class="btn" (click)="closeModal()">取消</button>
+            <button class="btn btn-outline" (click)="closeModal()">取消</button>
             <button class="btn btn-primary" (click)="saveReceipt()" [disabled]="saving">{{ saving ? '保存中...' : '确认收货' }}</button>
           </div>
         </div>
@@ -185,32 +201,6 @@ export class ReceiptComponent implements OnInit {
     });
   }
 
-  deleteReceipt(id: number): void {
-    if (!confirm('确认删除此收货记录?')) return;
-    this.apiService.deleteReceipt(id).subscribe({
-      next: () => this.loadReceipts()
-    });
-  }
-
-  prevPage(): void { this.page--; this.loadReceipts(); }
-  nextPage(): void { this.page++; this.loadReceipts(); }
-
-  openCreateModal(): void {
-    this.showModal = true;
-    this.selectedOrder = null;
-    this.modalOrderId = null;
-    this.formItems = [];
-    this.loadOrders();
-    this.loadWarehouses();
-  }
-
-  closeModal(): void {
-    this.showModal = false;
-    this.selectedOrder = null;
-    this.modalOrderId = null;
-    this.formItems = [];
-  }
-
   loadOrders(): void {
     let params = new HttpParams();
     params = params.set('status_min', '1');
@@ -227,6 +217,22 @@ export class ReceiptComponent implements OnInit {
         this.warehouses = res.data;
       }
     });
+  }
+
+  openCreateModal(): void {
+    this.showModal = true;
+    this.selectedOrder = null;
+    this.modalOrderId = null;
+    this.formItems = [];
+    this.loadOrders();
+    this.loadWarehouses();
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedOrder = null;
+    this.modalOrderId = null;
+    this.formItems = [];
   }
 
   onOrderSelected(): void {
@@ -292,4 +298,14 @@ export class ReceiptComponent implements OnInit {
       }
     });
   }
+
+  deleteReceipt(id: number): void {
+    if (!confirm('确认删除此收货记录?')) return;
+    this.apiService.deleteReceipt(id).subscribe({
+      next: () => this.loadReceipts()
+    });
+  }
+
+  prevPage(): void { this.page--; this.loadReceipts(); }
+  nextPage(): void { this.page++; this.loadReceipts(); }
 }

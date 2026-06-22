@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { NgClass, CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
 import { ApiService } from '../../shared/api.service';
 import { Material } from '../../shared/models';
@@ -8,7 +8,7 @@ import { Material } from '../../shared/models';
 @Component({
   selector: 'app-material',
   standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, CommonModule],
   template: `
     <div class="page-container">
       <div class="page-header">
@@ -59,7 +59,7 @@ import { Material } from '../../shared/models';
                 <td>{{ item.type === 1 ? '原材料' : '成品/半成品' }}</td>
                 <td>{{ item.category }}</td>
                 <td>
-                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-default'">
+                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-gray'">
                     {{ item.status === 1 ? '启用' : '停用' }}
                   </span>
                 </td>

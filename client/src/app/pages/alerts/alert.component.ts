@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpParams } from '@angular/common/http';
 import { ApiService } from '../../shared/api.service';
 import { Alert, PageResult } from '../../shared/models';
 
@@ -9,32 +10,41 @@ import { Alert, PageResult } from '../../shared/models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="page">
+    <div class="page-container">
       <div class="page-header">
-        <h2>预警催交</h2>
+        <h1>预警催交</h1>
         <button class="btn btn-primary" (click)="generateAlerts()">生成预警</button>
       </div>
 
-      <div class="filter-bar">
-        <select [(ngModel)]="filter.alert_type" (ngModelChange)="loadAlerts()">
-          <option [ngValue]="null">全部类型</option>
-          <option [ngValue]="1">超期未交货</option>
-          <option [ngValue]="2">异常损耗</option>
-        </select>
-        <select [(ngModel)]="filter.status" (ngModelChange)="loadAlerts()">
-          <option [ngValue]="null">全部状态</option>
-          <option [ngValue]="0">待处理</option>
-          <option [ngValue]="1">已处理</option>
-          <option [ngValue]="2">已忽略</option>
-        </select>
-        <select [(ngModel)]="filter.vendor_id" (ngModelChange)="loadAlerts()">
-          <option [ngValue]="null">全部外协厂</option>
-          <option *ngFor="let v of vendors" [ngValue]="v.id">{{ v.name }}</option>
-        </select>
-      </div>
-
       <div class="card">
-        <table class="table" *ngIf="alerts.length; else noData">
+        <div class="filter-bar">
+          <div class="form-group">
+            <label>预警类型</label>
+            <select class="form-control" [(ngModel)]="filter.alert_type" (ngModelChange)="loadAlerts()">
+              <option value="">全部类型</option>
+              <option value="1">超期未交货</option>
+              <option value="2">异常损耗</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>状态</label>
+            <select class="form-control" [(ngModel)]="filter.status" (ngModelChange)="loadAlerts()">
+              <option value="">全部状态</option>
+              <option value="0">待处理</option>
+              <option value="1">已处理</option>
+              <option value="2">已忽略</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>外协厂</label>
+            <select class="form-control" [(ngModel)]="filter.vendor_id" (ngModelChange)="loadAlerts()">
+              <option value="">全部外协厂</option>
+              <option *ngFor="let v of vendors" [value]="v.id">{{ v.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <table *ngIf="alerts.length > 0">
           <thead>
             <tr>
               <th>订单号</th>
@@ -65,20 +75,28 @@ import { Alert, PageResult } from '../../shared/models';
               <td>
                 <ng-container *ngIf="a.status === 0">
                   <button class="btn btn-sm btn-success" (click)="updateStatus(a.id!, 1)">已处理</button>
-                  <button class="btn btn-sm btn-secondary" (click)="updateStatus(a.id!, 2)">忽略</button>
+                  <button class="btn btn-sm btn-outline" (click)="updateStatus(a.id!, 2)">忽略</button>
                 </ng-container>
                 <span *ngIf="a.status !== 0">-</span>
               </td>
             </tr>
           </tbody>
         </table>
-        <ng-template #noData><p>暂无预警数据</p></ng-template>
-      </div>
+        <table *ngIf="alerts.length === 0">
+          <tbody>
+            <tr>
+              <td colspan="7" class="empty">暂无预警数据</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <div class="pagination" *ngIf="total > pageSize">
-        <button class="btn btn-sm" [disabled]="page <= 1" (click)="changePage(page - 1)">上一页</button>
-        <span>{{ page }} / {{ totalPages }}</span>
-        <button class="btn btn-sm" [disabled]="page >= totalPages" (click)="changePage(page + 1)">下一页</button>
+        <div class="pagination" *ngIf="total > pageSize">
+          <span>共 {{ total }} 条，第 {{ page }} / {{ totalPages }} 页</span>
+          <div class="pagination-buttons">
+            <button class="btn btn-sm" [disabled]="page <= 1" (click)="changePage(page - 1)">上一页</button>
+            <button class="btn btn-sm" [disabled]="page >= totalPages" (click)="changePage(page + 1)">下一页</button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -87,8 +105,8 @@ import { Alert, PageResult } from '../../shared/models';
 export class AlertComponent implements OnInit {
   alerts: Alert[] = [];
   vendors: { id?: number; name: string }[] = [];
-  filter: { alert_type: number | null; status: number | null; vendor_id: number | null } = {
-    alert_type: null, status: null, vendor_id: null
+  filter: { alert_type: string; status: string; vendor_id: string } = {
+    alert_type: '', status: '', vendor_id: ''
   };
   page = 1;
   pageSize = 20;
@@ -112,15 +130,14 @@ export class AlertComponent implements OnInit {
   }
 
   loadAlerts(): void {
-    let params = new URLSearchParams();
-    params.set('page', String(this.page));
-    params.set('pageSize', String(this.pageSize));
-    if (this.filter.alert_type !== null) params.set('alert_type', String(this.filter.alert_type));
-    if (this.filter.status !== null) params.set('status', String(this.filter.status));
-    if (this.filter.vendor_id !== null) params.set('vendor_id', String(this.filter.vendor_id));
+    let params = new HttpParams();
+    params = params.set('page', String(this.page));
+    params = params.set('pageSize', String(this.pageSize));
+    if (this.filter.alert_type !== '') params = params.set('alert_type', this.filter.alert_type);
+    if (this.filter.status !== '') params = params.set('status', this.filter.status);
+    if (this.filter.vendor_id !== '') params = params.set('vendor_id', this.filter.vendor_id);
 
-    const httpParams = this.buildHttpParams();
-    this.apiService.listAlerts(httpParams).subscribe({
+    this.apiService.listAlerts(params).subscribe({
       next: (res) => {
         const data: PageResult<Alert> = res.data;
         this.alerts = data?.list || [];
@@ -129,19 +146,9 @@ export class AlertComponent implements OnInit {
     });
   }
 
-  private buildHttpParams(): any {
-    let params: any = {};
-    params['page'] = this.page;
-    params['pageSize'] = this.pageSize;
-    if (this.filter.alert_type !== null) params['alert_type'] = this.filter.alert_type;
-    if (this.filter.status !== null) params['status'] = this.filter.status;
-    if (this.filter.vendor_id !== null) params['vendor_id'] = this.filter.vendor_id;
-    return params;
-  }
-
   generateAlerts(): void {
     this.apiService.generateAlerts().subscribe({
-      next: (res) => {
+      next: () => {
         this.loadAlerts();
       }
     });

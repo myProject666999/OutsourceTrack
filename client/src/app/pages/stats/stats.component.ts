@@ -9,9 +9,9 @@ import { VendorStats } from '../../shared/models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="page">
+    <div class="page-container">
       <div class="page-header">
-        <h2>统计分析</h2>
+        <h1>统计分析</h1>
       </div>
 
       <div class="card" *ngIf="loading && !comparison.length">
@@ -23,15 +23,15 @@ import { VendorStats } from '../../shared/models';
       </div>
 
       <div class="card" *ngIf="comparison.length">
-        <h3>外协厂对比</h3>
-        <table class="table">
+        <div class="card-title">外协厂对比</div>
+        <table>
           <thead>
             <tr>
-              <th>外协厂</th>
+              <th>外协厂名称</th>
               <th>总项数</th>
-              <th>已收货</th>
-              <th>交货率</th>
-              <th>合格率</th>
+              <th>已收货数</th>
+              <th>交货率%</th>
+              <th>合格率%</th>
             </tr>
           </thead>
           <tbody>
@@ -49,12 +49,18 @@ import { VendorStats } from '../../shared/models';
       <div class="card" *ngIf="vendorDetail">
         <div class="detail-header">
           <h3>{{ vendorDetail.vendor?.name || vendorDetail.vendor?.vendor_name }} - 详细统计</h3>
-          <button class="btn btn-sm btn-secondary" (click)="vendorDetail = null">关闭</button>
+          <button class="btn btn-sm btn-outline" (click)="vendorDetail = null">关闭</button>
         </div>
 
         <div class="filter-bar">
-          <label>起始日期: <input type="date" [(ngModel)]="startDate" (ngModelChange)="loadDetail()"></label>
-          <label>截止日期: <input type="date" [(ngModel)]="endDate" (ngModelChange)="loadDetail()"></label>
+          <div class="form-group">
+            <label>起始日期</label>
+            <input type="date" class="form-control" [(ngModel)]="startDate" (change)="loadDetail()">
+          </div>
+          <div class="form-group">
+            <label>截止日期</label>
+            <input type="date" class="form-control" [(ngModel)]="endDate" (change)="loadDetail()">
+          </div>
         </div>
 
         <div class="stats-grid">
@@ -63,7 +69,7 @@ import { VendorStats } from '../../shared/models';
             <span class="stat-value">{{ vendorDetail.orders?.total }}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">已完成</span>
+            <span class="stat-label">已完成数</span>
             <span class="stat-value">{{ vendorDetail.orders?.completed }}</span>
           </div>
           <div class="stat-item">

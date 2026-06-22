@@ -33,7 +33,7 @@ import { Warehouse } from '../../shared/models';
                 <td>{{ item.name }}</td>
                 <td>{{ warehouseTypeLabel(item.type) }}</td>
                 <td>
-                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-default'">
+                  <span class="badge" [ngClass]="item.status === 1 ? 'badge-success' : 'badge-gray'">
                     {{ item.status === 1 ? '启用' : '停用' }}
                   </span>
                 </td>
@@ -75,6 +75,13 @@ import { Warehouse } from '../../shared/models';
                   <option [ngValue]="3">综合仓</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label>状态</label>
+                <select class="form-control" [(ngModel)]="form.status">
+                  <option [ngValue]="1">启用</option>
+                  <option [ngValue]="0">停用</option>
+                </select>
+              </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-outline" (click)="closeModal()">取消</button>
@@ -91,7 +98,7 @@ export class WarehouseComponent implements OnInit {
   list: Warehouse[] = [];
   showModal = false;
   editingId: number | null = null;
-  form: Partial<Warehouse> = { code: '', name: '', type: 1 };
+  form: Partial<Warehouse> = { code: '', name: '', type: 1, status: 1 };
 
   constructor(private apiService: ApiService) {}
 
@@ -120,11 +127,12 @@ export class WarehouseComponent implements OnInit {
       this.form = {
         code: item.code,
         name: item.name,
-        type: item.type
+        type: item.type,
+        status: item.status
       };
     } else {
       this.editingId = null;
-      this.form = { code: '', name: '', type: 1 };
+      this.form = { code: '', name: '', type: 1, status: 1 };
     }
     this.showModal = true;
   }
